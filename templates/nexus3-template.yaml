@@ -13,7 +13,7 @@ objects:
   metadata:
     labels:
       app: ${SERVICE_NAME}
-    name: ${SERVICE_NAME}
+    name: nexusephemeral
   spec:
     strategy:
       type: Recreate
