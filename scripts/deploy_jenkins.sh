@@ -83,6 +83,11 @@ if [ "$BUILD_MASTER" = true ] ; then
 else
     oc new-app -f  $TEMPLATES_DIR/jenkins-image-template.yaml
 fi
+if [ "${ENABLE_OAUTH}" = true ]; then
+  oc adm policy add-role-to-group view system:authenticated -n $PROJECT_NAME || echo "Adding view access for all users to this project failed. Users need this if they are to log-in."
+fi
+
+oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=4Gi -p NAMESPACE=$PROJECT_NAME -p JENKINS_IMAGE_STREAM_TAG=jenkins2-centos7-ephemeral:latest -f  $TEMPLATES_DIR/jenkins-template.yml
 if [ "$BUILD_NEXUS" = true ] ; then
     oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -f  $TEMPLATES_DIR/nexus3-build-template.yaml
 else
@@ -90,11 +95,6 @@ else
 fi
 
 if [ "${NEXUS}" = true ]; then
-   oc new-app -f  $TEMPLATES_DIR/nexus3-template.yaml
+oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p NEXUS_IMAGE_STREAM_TAG=nexusephemeral:latest -f  $TEMPLATES_DIR/nexus3-template.yml
 fi
 
-if [ "${ENABLE_OAUTH}" = true ]; then
-  oc adm policy add-role-to-group view system:authenticated -n $PROJECT_NAME || echo "Adding view access for all users to this project failed. Users need this if they are to log-in."
-fi
-
-oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=4Gi -p NAMESPACE=$PROJECT_NAME -p JENKINS_IMAGE_STREAM_TAG=jenkins2-centos7-ephemeral:latest -f  $TEMPLATES_DIR/jenkins-template.yml

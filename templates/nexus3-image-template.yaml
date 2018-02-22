@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: nexus3-build-ose-template
+  template: nexus3-image-ose-template
 message: A Nexus3 build-config template
 metadata:
   annotations:

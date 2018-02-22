@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: jenkins-build-template
+  template: jenkins-build-ose-template
 message: A Jenkins build-config template
 metadata:
   annotations:

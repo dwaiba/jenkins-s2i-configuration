@@ -1,19 +1,37 @@
-apiVersion: v1
+---
 kind: Template
-labels:
-  template: nexus3-template
+apiVersion: v1
 metadata:
-  name: nexus3
+  name: nexus3-ose
+  creationTimestamp:
   annotations:
-    description: Sonatype Nexus 3  template
-    tags: ci,nexus3
+    openshift.io/display-name: Nexus3 (nexusephemeral)
+    description: |-
+      Nexus3 service
+    tags: instant-app,nexus3
+    template.openshift.io/long-description: This template deploys a Nexus3 server
+      capable of managing OpenShift Pipeline builds and supporting OpenShift-based
+      oauth login.
+    template.openshift.io/provider-display-name: dwaiba.
+message: A Nexus3 service has been created in your project. 
 objects:
-- apiVersion: v1
-  kind: ImageStream
+- kind: Route
+  apiVersion: v1
   metadata:
-    labels:
-      app: ${SERVICE_NAME}
-    name: nexusephemeral
+    name: "${NEXUS_SERVICE_NAME}"
+    creationTimestamp:
+  spec:
+    to:
+      kind: Service
+      name: "${NEXUS_SERVICE_NAME}"
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Allow
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${NEXUS_SERVICE_NAME}"
+    creationTimestamp:
   spec:
     strategy:
       type: Recreate
@@ -22,128 +40,115 @@ objects:
       imageChangeParams:
         automatic: true
         containerNames:
-        - jenkins
+        - nexus3
         from:
           kind: ImageStreamTag
-          name: "nexusephemeral:latest"
+          name: "${NEXUS_IMAGE_STREAM_TAG}"
           namespace: "${NAMESPACE}"
         lastTriggeredImage: ''
-- apiVersion: v1
-  kind: DeploymentConfig
-  metadata:
-    labels:
-      app: ${SERVICE_NAME}
-    name: ${SERVICE_NAME}
-  spec:
+    - type: ConfigChange
     replicas: 1
     selector:
-      deploymentconfig: ${SERVICE_NAME}
-    strategy:
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 600
-        updatePeriodSeconds: 1
-      type: Rolling
+      name: "${NEXUS_SERVICE_NAME}"
     template:
       metadata:
+        creationTimestamp:
         labels:
-          deploymentconfig: ${SERVICE_NAME}
+          name: "${NEXUS_SERVICE_NAME}"
       spec:
+        serviceAccountName: "${NEXUS_SERVICE_NAME}"
         containers:
-        - env:
-          - name: CONTEXT_PATH
-            value: /
-          image: ' '
-          imagePullPolicy: IfNotPresent
-          livenessProbe:
-            exec:
-              command:
-              - echo
-              - ok
-            failureThreshold: 3
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-          name: ${SERVICE_NAME}
-          ports:
-          - containerPort: 8081
-            protocol: TCP
+        - name: nexus3
+          image: " "
           readinessProbe:
-            failureThreshold: 3
+            timeoutSeconds: 3
+            initialDelaySeconds: 3
             httpGet:
-              path: /repository/maven-public/
+              path: "/"
               port: 8081
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-          resources: {}
-          terminationMessagePath: /dev/termination-log
-        dnsPolicy: ClusterFirst
+          livenessProbe:
+            timeoutSeconds: 3
+            initialDelaySeconds: 420
+            failureThreshold: 30
+            httpGet:
+              path: "/"
+              port: 8081
+          env:
+          - name: OPENSHIFT_ENABLE_OAUTH
+            value: "${ENABLE_OAUTH}"
+          - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
+            value: 'true'
+          - name: KUBERNETES_MASTER
+            value: https://kubernetes.default:443
+          - name: KUBERNETES_TRUST_CERTIFICATES
+            value: 'true'
+          - name: NEXUS_SERVICE_NAME
+            value: "${NEXUS_SERVICE_NAME}"
+          resources:
+            limits:
+              memory: "${MEMORY_LIMIT}"
+          terminationMessagePath: "/dev/termination-log"
+          imagePullPolicy: IfNotPresent
+          capabilities: {}
+          securityContext:
+            capabilities: {}
+            privileged: false
         restartPolicy: Always
-        securityContext: {}
-        terminationGracePeriodSeconds: 30
-    test: false
-    triggers:
-    - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - ${SERVICE_NAME}
-        from:
-          kind: ImageStreamTag
-          name: ${SERVICE_NAME}:${NEXUS_VERSION}
-      type: ImageChange
-- apiVersion: v1
-  kind: Service
+        dnsPolicy: ClusterFirst
+- kind: ServiceAccount
+  apiVersion: v1
   metadata:
-    labels:
-      app: ${SERVICE_NAME}
-    name: ${SERVICE_NAME}
+    name: "${NEXUS_SERVICE_NAME}"
+    annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.nexus3: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${NEXUS_SERVICE_NAME}"}}'
+- kind: RoleBinding
+  apiVersion: v1
+  metadata:
+    name: "${NEXUS_SERVICE_NAME}_edit"
+  groupNames:
+  subjects:
+  - kind: ServiceAccount
+    name: "${NEXUS_SERVICE_NAME}"
+  roleRef:
+    name: edit
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: "${NEXUS_SERVICE_NAME}"
+    creationTimestamp:
   spec:
     ports:
-    - name: 8081-tcp
-      port: 8081
+    - name: web
       protocol: TCP
+      port: 8081
       targetPort: 8081
+      nodePort: 0
     selector:
-      deploymentconfig: ${SERVICE_NAME}
-    sessionAffinity: None
+      name: "${NEXUS_SERVICE_NAME}"
     type: ClusterIP
-- apiVersion: v1
-  kind: Route
-  metadata:
-    labels:
-      app: ${SERVICE_NAME}
-    name: ${SERVICE_NAME}
-  spec:
-    port:
-      targetPort: 8081-tcp
-    to:
-      kind: Service
-      name: ${SERVICE_NAME}
-      weight: 100
-- apiVersion: extensions/v1beta1
-  kind: HorizontalPodAutoscaler
-  metadata:
-    name: nexus3autoscaler 
-  spec:
-    scaleRef:
-      kind: DeploymentConfig 
-      name: frontend 
-      apiVersion: v1 
-      subresource: scale
-    minReplicas: 1 
-    maxReplicas: 10 
-    cpuUtilization:
-      targetPercentage: 80
+    sessionAffinity: None
 parameters:
-- description: Sonatype Nexus service name
-  displayName: Sonatype Nexus service name
-  name: SERVICE_NAME
-  required: true
+- name: NEXUS_SERVICE_NAME
+  displayName: Nexus3 Service Name
+  description: The name of the OpenShift Service exposed for the Nexus3 container.
   value: nexus3
+- name: ENABLE_OAUTH
+  displayName: Enable OAuth in Nexus3
+  description: Whether to enable OAuth OpenShift integration. If false, the static
+    account 'admin' will be initialized with the password 'password'.
+  value: 'true'
+- name: MEMORY_LIMIT
+  displayName: Memory Limit
+  description: Maximum amount of memory the container can use.
+  value: 4Gi
+- name: NAMESPACE
+  displayName: Nexus3 ImageStream Namespace
+  description: The Nexus3 Namespace where the Nexus3 ImageStream resides.
+  value: openshift
+- name: NEXUS_IMAGE_STREAM_TAG
+  displayName: Nexus3 ImageStreamTag
+  description: Name of the ImageStreamTag to be used for the Nexus3 image.
+  value: nexusephemeral:latest
+labels:
+  template: nexus3-ose
+
