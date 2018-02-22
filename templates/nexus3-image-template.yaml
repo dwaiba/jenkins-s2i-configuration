@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Template
+labels:
+  template: nexus3-build-ose-template
+message: A Nexus3 build-config template
+metadata:
+  annotations:
+    description: |-
+        Nexus3 build config template 
+    iconClass: icon-nexus
+    tags: instant-app,nexus3
+  name: nexus-ose
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${NEXUS_SERVICE_NAME}
+  spec:
+    dockerImageRepository: "nexusephemeral"
+parameters:
+- description: The name of the OpenShift Service exposed for the Nexus3 container.
+  displayName: Nexus3 Service Name
+  name: NEXUS_SERVICE_NAME
+  value: nexus3

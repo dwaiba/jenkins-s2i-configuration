@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Template
+labels:
+  template: jenkins-build-ose-template
+message: A Jenkins build-config template
+metadata:
+  annotations:
+    description: |-
+        Jenkins build config template 
+    iconClass: icon-jenkins
+    tags: instant-app,jenkins
+  name: jenkins-ose
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${JENKINS_SERVICE_NAME}
+  spec:
+    dockerImageRepository: "jenkins/jenkins2-centos7-ephemeral"
+parameters:
+- description: The name of the OpenShift Service exposed for the Jenkins container.
+  displayName: Jenkins Service Name
+  name: JENKINS_SERVICE_NAME
+  value: jenkins

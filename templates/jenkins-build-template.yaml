@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Template
+labels:
+  template: jenkins-build-template
+message: A Jenkins build-config template
+metadata:
+  annotations:
+    description: |-
+        Jenkins build config template
+    iconClass: icon-jenkins
+    tags: instant-app,jenkins
+  name: jenkins-ose
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: jenkins2-centos7-ephemeral
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: ${JENKINS_SERVICE_NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: jenkins2-centos7-ephemeral:latest
+    runPolicy: Serial
+    source:
+      git:
+        uri: https://github.com/${GITHUB_ORG}/jenkins-s2i-configuration
+        ref: ${GITHUB_REF}
+      type: Git
+      contextDir: ./
+    strategy:
+      dockerStrategy:
+          noCache: true
+          forcePull: true
+      type: Docker
+    triggers:
+    - type: ImageChange
+    - type: ConfigChange
+
+parameters:
+- description: The name of the github organization to reference in the configuration
+  displayName: Github Organization
+  name: GITHUB_ORG
+  value: dwaiba
+- description: The name of the repository branch to reference in the configuration
+  displayName: Branch
+  name: GITHUB_REF
+  value: master
+- description: The name of the OpenShift Service exposed for the Jenkins container.
+  displayName: Jenkins Service Name
+  name: JENKINS_SERVICE_NAME
+  value: jenkins
+- description: The name of the service used for master/slave communication.
+  displayName: Jenkins JNLP Service Name
+  name: JNLP_SERVICE_NAME
+  value: jenkins-jnlp
+

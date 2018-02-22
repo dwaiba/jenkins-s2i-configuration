@@ -1,0 +1,5 @@
+APPLICATION_NAME=spring-rest
+NAMESPACE=jenkins
+SA_NAMESPACE=jenkins
+READINESS_RESPONSE=status.:.UP
+READINESS_PATH=/health
