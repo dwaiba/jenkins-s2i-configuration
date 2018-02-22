@@ -127,6 +127,20 @@ objects:
       kind: Service
       name: ${SERVICE_NAME}
       weight: 100
+- apiVersion: extensions/v1beta1
+  kind: HorizontalPodAutoscaler
+  metadata:
+    name: nexus3autoscaler 
+  spec:
+    scaleRef:
+      kind: DeploymentConfig 
+      name: frontend 
+      apiVersion: v1 
+      subresource: scale
+    minReplicas: 1 
+    maxReplicas: 10 
+    cpuUtilization:
+      targetPercentage: 80
 parameters:
 - description: Sonatype Nexus service name
   displayName: Sonatype Nexus service name
