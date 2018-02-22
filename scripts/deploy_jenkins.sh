@@ -95,6 +95,6 @@ else
 fi
 
 if [ "${NEXUS}" = true ]; then
-oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p NEXUS_IMAGE_STREAM_TAG=nexusephemeral:latest -f  $TEMPLATES_DIR/nexus3-template.yml
+oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p NEXUS_IMAGE_STREAM_TAG=nexusephemeral:latest -f  $TEMPLATES_DIR/nexus3-template.yaml
 fi
 
