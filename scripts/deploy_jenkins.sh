@@ -32,6 +32,13 @@ fi
 if [ -z "${NEXUS}" ]; then
    NEXUS=false
 fi
+if [ -z "${BUILD_SONAR}" ]; then
+   BUILD_SONAR=false
+fi
+
+if [ -z "${SONAR}" ]; then
+   SONAR=false
+fi
 
 if [ -z "${LIMITS}" ]; then
    LIMITS=true
@@ -88,6 +95,7 @@ if [ "${ENABLE_OAUTH}" = true ]; then
 fi
 
 oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=4Gi -p NAMESPACE=$PROJECT_NAME -p JENKINS_IMAGE_STREAM_TAG=jenkins2-centos7-ephemeral:latest -f  $TEMPLATES_DIR/jenkins-template.yml
+
 if [ "$BUILD_NEXUS" = true ] ; then
     oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -f  $TEMPLATES_DIR/nexus3-build-template.yaml
 else
@@ -97,4 +105,15 @@ fi
 if [ "${NEXUS}" = true ]; then
 oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p NEXUS_IMAGE_STREAM_TAG=nexusephemeral:latest -f  $TEMPLATES_DIR/nexus3-template.yaml
 fi
+
+if [ "$BUILD_SONAR" = true ] ; then
+    oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -f  $TEMPLATES_DIR/sonarqube-build-template.yaml
+else
+    oc new-app -f  $TEMPLATES_DIR/sonarqube-image-template.yaml
+fi
+
+if [ "${SONAR}" = true ]; then
+oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p SONAR_IMAGE_STREAM_TAG=sonarqubeephemeral:latest -f  $TEMPLATES_DIR/sonarqube-template.yaml
+fi
+
 

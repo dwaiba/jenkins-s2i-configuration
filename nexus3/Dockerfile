@@ -1,6 +1,6 @@
 FROM  openjdk:8-jre-alpine
 #ENV http_proxy "http://redacted@surf.proxy.agis.allianz:8080/"
-#@ENV https_proxy "https://redacted@surf.proxy.agis.allianz:8080/"
+#ENV https_proxy "https://redacted@surf.proxy.agis.allianz:8080/"
 ENV NEXUS_VERSION 3.8.0-02
 
 ENV SONATYPE_DIR /opt/sonatype
@@ -20,10 +20,6 @@ RUN mkdir -p /opt/sonatype/ \
   && wget https://sonatype-download.global.ssl.fastly.net/nexus/3/nexus-${NEXUS_VERSION}-unix.tar.gz -O - \
   | tar zx -C "${SONATYPE_DIR}" && rm -fr ${SONATYPE_WORK} \
   && mv "${SONATYPE_DIR}/nexus-${NEXUS_VERSION}" "${NEXUS_HOME}"
-#RUN mkdir -p /opt/sonatype/ \
-#  && curl -L https://sonatype-download.global.ssl.fastly.net/nexus/3/nexus-${NEXUS_VERSION}-unix.tar.gz -o nexus-${NEXUS_VERSION}-unix.tar.gz \
-#  | tar zx -C "${SONATYPE_DIR}" && rm -fr ${SONATYPE_WORK} \
-#  && mv "${SONATYPE_DIR}/nexus-${NEXUS_VERSION}" "${NEXUS_HOME}"
 
 # configure nexus
 RUN sed \

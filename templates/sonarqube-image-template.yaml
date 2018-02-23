@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Template
+labels:
+  template: sonarqube-image-ose-template
+message: A SonarQube build-config template
+metadata:
+  annotations:
+    description: |-
+        SonarQube build config template 
+    iconClass: icon-sonarqube
+    tags: instant-app,sonarqube
+  name: sonarqube-ose
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: ${SONAR_SERVICE_NAME}
+  spec:
+    dockerImageRepository: "sonarqubeephemeral"
+parameters:
+- description: The name of the OpenShift Service exposed for the SonarQube container.
+  displayName: SonarQube Service Name
+  name: SONAR_SERVICE_NAME
+  value: sonarqube

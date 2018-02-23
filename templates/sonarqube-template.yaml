@@ -1,0 +1,154 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: sonarqube-ose
+  creationTimestamp:
+  annotations:
+    openshift.io/display-name: SonarQube (sonarqubeephemeral)
+    description: |-
+      SonarQube service
+    tags: instant-app,sonarqube
+    template.openshift.io/long-description: This template deploys a SonarQube server
+      capable of managing OpenShift Pipeline builds and supporting OpenShift-based
+      oauth login.
+    template.openshift.io/provider-display-name: dwaiba.
+message: A SonarQube service has been created in your project. 
+objects:
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: "${SONAR_SERVICE_NAME}"
+    creationTimestamp:
+  spec:
+    to:
+      kind: Service
+      name: "${SONAR_SERVICE_NAME}"
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Allow
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${SONAR_SERVICE_NAME}"
+    creationTimestamp:
+  spec:
+    strategy:
+      type: Recreate
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - sonarqube
+        from:
+          kind: ImageStreamTag
+          name: "${SONAR_IMAGE_STREAM_TAG}"
+          namespace: "${NAMESPACE}"
+        lastTriggeredImage: ''
+    - type: ConfigChange
+    replicas: 1
+    selector:
+      name: "${SONAR_SERVICE_NAME}"
+    template:
+      metadata:
+        creationTimestamp:
+        labels:
+          name: "${SONAR_SERVICE_NAME}"
+      spec:
+        serviceAccountName: "${SONAR_SERVICE_NAME}"
+        containers:
+        - name: sonarqube
+          image: " "
+          readinessProbe:
+            timeoutSeconds: 3
+            initialDelaySeconds: 3
+            httpGet:
+              path: "/"
+              port: 9000
+          livenessProbe:
+            timeoutSeconds: 3
+            initialDelaySeconds: 420
+            failureThreshold: 30
+            httpGet:
+              path: "/"
+              port: 9000
+          env:
+          - name: OPENSHIFT_ENABLE_OAUTH
+            value: "${ENABLE_OAUTH}"
+          - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
+            value: 'true'
+          - name: KUBERNETES_MASTER
+            value: https://kubernetes.default:443
+          - name: KUBERNETES_TRUST_CERTIFICATES
+            value: 'true'
+          - name: SONAR_SERVICE_NAME
+            value: "${SONAR_SERVICE_NAME}"
+          resources:
+            limits:
+              memory: "${MEMORY_LIMIT}"
+          terminationMessagePath: "/dev/termination-log"
+          imagePullPolicy: IfNotPresent
+          capabilities: {}
+          securityContext:
+            capabilities: {}
+            privileged: false
+        restartPolicy: Always
+        dnsPolicy: ClusterFirst
+- kind: ServiceAccount
+  apiVersion: v1
+  metadata:
+    name: "${SONAR_SERVICE_NAME}"
+    annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.sonarqube: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${SONAR_SERVICE_NAME}"}}'
+- kind: RoleBinding
+  apiVersion: v1
+  metadata:
+    name: "${SONAR_SERVICE_NAME}_edit"
+  groupNames:
+  subjects:
+  - kind: ServiceAccount
+    name: "${SONAR_SERVICE_NAME}"
+  roleRef:
+    name: edit
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: "${SONAR_SERVICE_NAME}"
+    creationTimestamp:
+  spec:
+    ports:
+    - name: web
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+      nodePort: 0
+    selector:
+      name: "${SONAR_SERVICE_NAME}"
+    type: ClusterIP
+    sessionAffinity: None
+parameters:
+- name: SONAR_SERVICE_NAME
+  displayName: SonarQube Service Name
+  description: The name of the OpenShift Service exposed for the SonarQube container.
+  value: sonarqube
+- name: ENABLE_OAUTH
+  displayName: Enable OAuth in SonarQube
+  description: Whether to enable OAuth OpenShift integration. If false, the static
+    account 'admin' will be initialized with the password 'password'.
+  value: 'true'
+- name: MEMORY_LIMIT
+  displayName: Memory Limit
+  description: Maximum amount of memory the container can use.
+  value: 4Gi
+- name: NAMESPACE
+  displayName: SonarQube ImageStream Namespace
+  description: The SonarQube Namespace where the SonarQube ImageStream resides.
+  value: openshift
+- name: SONAR_IMAGE_STREAM_TAG
+  displayName: SonarQube ImageStreamTag
+  description: Name of the ImageStreamTag to be used for the SonarQube image.
+  value: sonarqubeephemeral:latest
+labels:
+  template: sonarqube-ose
+
