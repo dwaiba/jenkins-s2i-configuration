@@ -30,6 +30,8 @@ objects:
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
+    annotations:
+      openshift.io/scc: privileged
     name: "${NEXUS_SERVICE_NAME}"
     creationTimestamp:
   spec:
