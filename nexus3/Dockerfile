@@ -31,7 +31,7 @@ RUN sed \
 RUN adduser -S -u 200 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus nexus
 
 RUN mkdir -p "${NEXUS_DATA}/etc" "${NEXUS_DATA}/log" "${NEXUS_DATA}/tmp" "${SONATYPE_WORK}"
-RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus3
+RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus
 
 ## prevent warning: /opt/sonatype/nexus/etc/org.apache.karaf.command.acl.config.cfg (Permission denied)
 RUN chown -R nexus "${NEXUS_HOME}/etc/"
