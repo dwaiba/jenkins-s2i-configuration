@@ -28,17 +28,17 @@ RUN sed \
     -i ${NEXUS_HOME}/etc/nexus-default.properties
 
 ## create nexus user
-RUN adduser -S -u 200 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus nexus
+RUN adduser -S -u 200 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus3 nexus3
 
 RUN mkdir -p "${NEXUS_DATA}/etc" "${NEXUS_DATA}/log" "${NEXUS_DATA}/tmp" "${SONATYPE_WORK}"
 RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus
 
 ## prevent warning: /opt/sonatype/nexus/etc/org.apache.karaf.command.acl.config.cfg (Permission denied)
-RUN chown -R nexus "${NEXUS_HOME}/etc/"
+RUN chown -R nexus3 "${NEXUS_HOME}/etc/"
 
 COPY entrypoint.sh /
-RUN chown -R nexus "${NEXUS_DATA}"
-RUN chown  nexus /entrypoint.sh
+RUN chown -R nexus3 "${NEXUS_DATA}"
+RUN chown  nexus3 /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 
