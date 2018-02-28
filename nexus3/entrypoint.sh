@@ -6,7 +6,7 @@
 # clear tmp and cache for upgrade
 #rm -fr "${NEXUS_DATA}"/tmp/ "${NEXUS_DATA}"/cache/
 
-    #exec su -s /bin/sh -c '/opt/sonatype/nexus/bin/nexus run' nexus3 || \
+ #exec su -s /bin/sh -c '/opt/sonatype/nexus/bin/nexus run' nexus3 || \
 [ $# -eq 0 ] && \
     exec  /bin/sh -c '/opt/sonatype/nexus/bin/nexus run' nexus3 || \
     exec "$@"

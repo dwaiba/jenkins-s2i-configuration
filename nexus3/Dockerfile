@@ -2,7 +2,7 @@ FROM  openjdk:8-jre-alpine
 ENV NEXUS_VERSION 3.8.0-02
 
 ENV SONATYPE_DIR /opt/sonatype
-ENV NEXUS_HOME ${SONATYPE_DIR}/nexus
+ENV NEXUS_HOME ${SONATYPE_DIR}/nexus3
 ENV NEXUS_DATA /nexus-data
 ENV NEXUS_CONTEXT ''
 ENV SONATYPE_WORK ${SONATYPE_DIR}/sonatype-work
@@ -31,7 +31,7 @@ RUN sed \
 RUN adduser -S -u 200 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus3 nexus3
 
 RUN mkdir -p "${NEXUS_DATA}/etc" "${NEXUS_DATA}/log" "${NEXUS_DATA}/tmp" "${SONATYPE_WORK}"
-RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus
+RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus3
 
 ## prevent warning: /opt/sonatype/nexus/etc/org.apache.karaf.command.acl.config.cfg (Permission denied)
 RUN chown -R nexus3 "${NEXUS_HOME}/etc/"
