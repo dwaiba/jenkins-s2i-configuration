@@ -1,6 +1,4 @@
 FROM  openjdk:8-jre-alpine
-#ENV http_proxy "http://redacted@surf.proxy.agis.allianz:8080/"
-#ENV https_proxy "https://redacted@surf.proxy.agis.allianz:8080/"
 ENV NEXUS_VERSION 3.8.0-02
 
 ENV SONATYPE_DIR /opt/sonatype
@@ -8,9 +6,12 @@ ENV NEXUS_HOME ${SONATYPE_DIR}/nexus
 ENV NEXUS_DATA /nexus-data
 ENV NEXUS_CONTEXT ''
 ENV SONATYPE_WORK ${SONATYPE_DIR}/sonatype-work
+RUN mkdir /nexus-data
 
 # install nexus
 #RUN apk update && apk add openssl curl && rm -fr /var/cache/apk/*
+#RUN echo http://nl.alpinelinux.org//mirrors/alpine/v3.7/main > /etc/apk/repositories; \
+#    echo http://nl.alpinelinux.org/mirrors/alpine/v3.7/community >> /etc/apk/repositories
 RUN apk update  && rm -fr /var/cache/apk/*
 RUN apk --no-cache add openssl wget
 RUN   apk update \
@@ -40,7 +41,7 @@ RUN chown  nexus /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 
-VOLUME ${NEXUS_DATA}
+#VOLUME ${NEXUS_DATA}
 
 EXPOSE 8081
 WORKDIR ${NEXUS_HOME}
