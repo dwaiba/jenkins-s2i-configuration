@@ -37,6 +37,7 @@ RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus
 RUN chown -R nexus "${NEXUS_HOME}/etc/"
 
 COPY entrypoint.sh /
+RUN chown -R nexus "${NEXUS_DATA}"
 RUN chown  nexus /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
