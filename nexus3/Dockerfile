@@ -6,7 +6,7 @@ ENV NEXUS_HOME ${SONATYPE_DIR}/nexus
 ENV NEXUS_DATA /nexus-data
 ENV NEXUS_CONTEXT ''
 ENV SONATYPE_WORK ${SONATYPE_DIR}/sonatype-work
-RUN mkdir /nexus-data
+user root
 
 # install nexus
 #RUN apk update && apk add openssl curl && rm -fr /var/cache/apk/*
