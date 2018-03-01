@@ -1,5 +1,5 @@
 FROM  openjdk:8-jre-alpine
-ENV NEXUS_VERSION 3.8.0-02
+ENV NEXUS_VERSION 3.9.0-01
 
 ENV SONATYPE_DIR /opt/sonatype
 ENV NEXUS_HOME ${SONATYPE_DIR}/nexus3
@@ -38,8 +38,8 @@ RUN chown -R nexus3 "${NEXUS_HOME}/etc/"
 
 COPY entrypoint.sh /
 RUN chown -R nexus3 "${NEXUS_DATA}"
-RUN chown  nexus3 /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+RUN chown  nexus3 /entrypoint.sh
 
 
 #VOLUME ${NEXUS_DATA}

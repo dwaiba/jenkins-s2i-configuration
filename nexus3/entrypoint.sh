@@ -8,5 +8,5 @@
 
  #exec su -s /bin/sh -c '/opt/sonatype/nexus/bin/nexus run' nexus3 || \
 [ $# -eq 0 ] && \
-    exec  /bin/sh -c '/opt/sonatype/nexus/bin/nexus run' nexus3 || \
+    exec  /bin/sh -c '/opt/sonatype/nexus3/bin/nexus run' nexus3 || \
     exec "$@"
