@@ -3,7 +3,7 @@ ENV NEXUS_VERSION 3.9.0-01
 
 ENV SONATYPE_DIR /opt/sonatype
 ENV NEXUS_HOME ${SONATYPE_DIR}/nexus3
-ENV NEXUS_DATA /nexus-data
+ENV NEXUS_DATA /opt/nexus-data
 ENV NEXUS_CONTEXT ''
 ENV SONATYPE_WORK ${SONATYPE_DIR}/sonatype-work
 user root
@@ -34,7 +34,9 @@ RUN mkdir -p "${NEXUS_DATA}/etc" "${NEXUS_DATA}/log" "${NEXUS_DATA}/tmp" "${SONA
 RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus3
 
 ## prevent warning: /opt/sonatype/nexus/etc/org.apache.karaf.command.acl.config.cfg (Permission denied)
-RUN chown -R nexus3 "${NEXUS_HOME}/etc/"
+RUN chown -R nexus3 /opt
+RUN chown -R nexus3 "${NEXUS_HOME}"
+RUN chown -R nexus3 "${SONATYPE_DIR}"
 
 COPY entrypoint.sh /
 RUN chown -R nexus3 "${NEXUS_DATA}"
