@@ -122,8 +122,8 @@ objects:
     ports:
     - name: web
       protocol: TCP
-      port: 9000
-      targetPort: 80
+      port: 80
+      targetPort: 9000
       nodePort: 0
     selector:
       name: "${SONAR_SERVICE_NAME}"
