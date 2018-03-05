@@ -7,5 +7,5 @@
 #rm -fr "${NEXUS_DATA}"/tmp/ "${NEXUS_DATA}"/cache/
 
 [ $# -eq 0 ] && \
- exec su -s /bin/sh -c '/opt/sonatype/nexus/bin/nexus run' nexus3 || \
+ exec su -s /bin/sh -c '/opt/sonatype/nexus3/bin/nexus run' nexus3 || \
  exec "$@"
