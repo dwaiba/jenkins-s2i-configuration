@@ -123,7 +123,7 @@ objects:
     - name: web
       protocol: TCP
       port: 8081
-      targetPort: 8081
+      targetPort: 80
       nodePort: 0
     selector:
       name: "${NEXUS_SERVICE_NAME}"
