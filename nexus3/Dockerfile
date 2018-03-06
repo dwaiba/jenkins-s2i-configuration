@@ -1,58 +1,101 @@
-FROM  openjdk:8-jre-alpine
-ENV NEXUS_VERSION 3.9.0-01
+# Copyright (c) 2016-present Sonatype, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-ENV SONATYPE_DIR /opt/sonatype
-ENV NEXUS_HOME ${SONATYPE_DIR}/nexus3
-ENV NEXUS_DATA /opt/nexus-data
-ENV NEXUS_CONTEXT ''
-ENV SONATYPE_WORK ${SONATYPE_DIR}/sonatype-work
-user root
+FROM       registry.access.redhat.com/rhel7/rhel
+MAINTAINER Sonatype <cloud-ops@sonatype.com>
 
-# install nexus
-#RUN apk update && apk add openssl curl && rm -fr /var/cache/apk/*
-#RUN echo http://nl.alpinelinux.org//mirrors/alpine/v3.7/main > /etc/apk/repositories; \
-#    echo http://nl.alpinelinux.org/mirrors/alpine/v3.7/community >> /etc/apk/repositories
-RUN apk update  && rm -fr /var/cache/apk/*
-RUN apk --no-cache add openssl wget
-RUN   apk update \
-  &&   apk add ca-certificates wget \
-  &&   update-ca-certificates  
-RUN mkdir -p /opt/sonatype/ \
-  && wget https://sonatype-download.global.ssl.fastly.net/nexus/3/nexus-${NEXUS_VERSION}-unix.tar.gz -O - \
-  | tar zx -C "${SONATYPE_DIR}" && rm -fr ${SONATYPE_WORK} \
-  && mv "${SONATYPE_DIR}/nexus-${NEXUS_VERSION}" "${NEXUS_HOME}"
+# Atomic Labels
+LABEL name="Nexus Repository Manager" \
+      vendor="Sonatype" \
+      version="3.7.1-02" \
+      release="3.7.1" \
+      url="https://sonatype.com" \
+      summary="The Nexus Repository Manager server \
+          with universal support for popular component formats." \
+      run="docker run -d --name NAME \
+          -p 8081:8081 \
+          IMAGE" \
+      stop="docker stop NAME"
 
-# configure nexus
-RUN sed \
-    -e '/^nexus-context/ s:$:${NEXUS_CONTEXT}:' \
-    -i ${NEXUS_HOME}/etc/nexus-default.properties
+# OpenShift Labels
+LABEL io.k8s.description="The Nexus Repository Manager server \
+          with universal support for popular component formats." \
+      io.k8s.display-name="Nexus Repository Manager" \
+      io.openshift.expose-services="8081:8081" \
+      io.openshift.tags="Sonatype,Nexus,Repository Manager"
 
-## create nexus user
-#RUN adduser -S -u 200 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus3 nexus3
-RUN adduser -S -u 1000 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus3 nexus3
+# Sonatype Labels
+LABEL com.sonatype.license="Apache License, Version 2.0"
 
-RUN mkdir -p "${NEXUS_DATA}/etc" "${NEXUS_DATA}/log" "${NEXUS_DATA}/tmp" "${SONATYPE_WORK}"
-RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus3
+COPY help.1 uid_entrypoint /
 
-## prevent warning: /opt/sonatype/nexus/etc/org.apache.karaf.command.acl.config.cfg (Permission denied)
-RUN chown -R nexus3 /opt
-RUN chown -R nexus3 "${NEXUS_HOME}"
-RUN chown -R nexus3 "${SONATYPE_DIR}"
+COPY licenses /licenses
 
-COPY entrypoint.sh /
-RUN chown -R nexus3 "${NEXUS_DATA}"
-RUN chmod +x /entrypoint.sh
-RUN chown  nexus3 /entrypoint.sh
+# Install Runtime Environment
+RUN set -x && \
+    yum clean all && \
+    REPOLIST=rhel-7-server-rpms,rhel-7-server-optional-rpms,rhel-7-server-thirdparty-oracle-java-rpms \
+    INSTALL_PKGS="tar java-1.8.0-oracle-devel" && \
+    yum -y update-minimal --disablerepo "*" --enablerepo ${REPOLIST} --setopt=tsflags=nodocs \
+      --security --sec-severity=Important --sec-severity=Critical && \
+    yum -y install --disablerepo "*" --enablerepo ${REPOLIST} --setopt=tsflags=nodocs ${INSTALL_PKGS} && \
+    yum clean all
 
+# Install Nexus
+ENV SONATYPE_DIR=/opt/sonatype
+ENV NEXUS_DATA=/nexus-data \
+    NEXUS_HOME=${SONATYPE_DIR}/nexus \
+    NEXUS_VERSION=3.7.1-02 \
+    SONATYPE_WORK=${SONATYPE_DIR}/sonatype-work \
+    NEXUS_CONTEXT='' \
+    USER_NAME=nexus3 \
+    USER_UID=200
 
-#VOLUME ${NEXUS_DATA}
+# Install Nexus and Configure Nexus Runtime Environment
+RUN mkdir -p ${NEXUS_HOME} && \
+    curl --fail --silent --location --retry 3 \
+      https://download.sonatype.com/nexus/3/nexus-${NEXUS_VERSION}-unix.tar.gz \
+      | gunzip \
+      | tar x -C ${NEXUS_HOME} --strip-components=1 nexus-${NEXUS_VERSION} && \
+    chown -R root:root ${NEXUS_HOME} && \
+    \
+    sed \
+      -e '/^nexus-context/ s:$:${NEXUS_CONTEXT}:' \
+      -i ${NEXUS_HOME}/etc/nexus-default.properties && \
+    \
+    useradd -l -u ${USER_UID} -r -g 0 -m -d ${NEXUS_DATA} -s /sbin/no-login \
+            -c "${USER_NAME} application user" ${USER_NAME} && \
+            mkdir -p ${NEXUS_DATA}/etc ${NEXUS_DATA}/log ${NEXUS_DATA}/tmp ${SONATYPE_WORK} && \
+            ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus3 && \
+            chown -R ${USER_NAME}:0 ${NEXUS_DATA} && \
+            chmod -R g+rw ${NEXUS_DATA} /etc/passwd && \
+            chmod ug+x /uid_entrypoint && \
+            find ${NEXUS_DATA} -type d -exec chmod g+x {} +
 
-EXPOSE 8081
+VOLUME ${NEXUS_DATA}
+
+# arbitrary uid recognition at runtime - for OpenShift deployments
+RUN sed "s@${USER_NAME}:x:${USER_UID}:@${USER_NAME}:x:\${USER_ID}:@g" /etc/passwd > /etc/passwd.template
+
+# Supply non variable to USER command ${USER_NAME}
+USER 200
 WORKDIR ${NEXUS_HOME}
 
-ENV JAVA_MAX_MEM 1200m
-ENV JAVA_MIN_MEM 1200m
-ENV EXTRA_JAVA_OPTS ""
-USER nexus3
+ENV JAVA_MAX_MEM=1200m \
+    JAVA_MIN_MEM=1200m
 
-ENTRYPOINT ["/entrypoint.sh"]
+EXPOSE 8081
+
+ENTRYPOINT [ "/uid_entrypoint" ]
+CMD ["bin/nexus", "run"]
