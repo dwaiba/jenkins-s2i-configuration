@@ -28,7 +28,8 @@ RUN sed \
     -i ${NEXUS_HOME}/etc/nexus-default.properties
 
 ## create nexus user
-RUN adduser -S -u 200 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus3 nexus3
+#RUN adduser -S -u 200 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus3 nexus3
+RUN adduser -S -u 1000 -D -H -h "${NEXUS_DATA}" -s /bin/false nexus3 nexus3
 
 RUN mkdir -p "${NEXUS_DATA}/etc" "${NEXUS_DATA}/log" "${NEXUS_DATA}/tmp" "${SONATYPE_WORK}"
 RUN ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus3
