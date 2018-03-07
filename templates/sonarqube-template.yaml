@@ -66,14 +66,14 @@ objects:
             timeoutSeconds: 3
             initialDelaySeconds: 3
             httpGet:
-              path: "/"
+              path: "/sessions/new"
               port: 9000
           livenessProbe:
             timeoutSeconds: 3
             initialDelaySeconds: 420
             failureThreshold: 30
             httpGet:
-              path: "/"
+              path: "/sessions/new"
               port: 9000
           env:
           - name: OPENSHIFT_ENABLE_OAUTH
@@ -102,7 +102,7 @@ objects:
   metadata:
     name: "${SONAR_SERVICE_NAME}"
     annotations:
-      serviceaccounts.openshift.io/oauth-redirectreferenc.jenkins: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${SONAR_SERVICE_NAME}"}}'
+      serviceaccounts.openshift.io/oauth-redirectreferenc.sonarqube: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${SONAR_SERVICE_NAME}"}}'
 - kind: RoleBinding
   apiVersion: v1
   metadata:
