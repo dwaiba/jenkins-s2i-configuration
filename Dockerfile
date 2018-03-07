@@ -3,8 +3,8 @@ FROM jenkins/jenkins
 
 USER root
 
-COPY plugins.txt /tmp
-RUN /usr/local/bin/install-plugins.sh /tmp/plugins.txt
+COPY plugins.txt /
+RUN /usr/local/bin/install-plugins.sh plugins.txt
 
 # Install own maven since the maven packaged by CentOS is ancient
 #COPY apache-maven-bin.tar.gz /tmp/apache-maven-bin.tar.gz
