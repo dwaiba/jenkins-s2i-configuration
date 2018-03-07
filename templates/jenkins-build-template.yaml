@@ -31,7 +31,7 @@ objects:
         uri: https://github.com/${GITHUB_ORG}/jenkins-s2i-configuration
         ref: ${GITHUB_REF}
       type: Git
-      contextDir: ./docker
+      contextDir: ./
     strategy:
       dockerStrategy:
           noCache: true
