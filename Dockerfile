@@ -1,10 +1,10 @@
-#FROM openshift/jenkins-2-centos7
-FROM jenkins/jenkins
+FROM openshift/jenkins-2-centos7
+#FROM jenkins/jenkins
 
-USER jenkins
+USER root
 
-COPY plugins.txt /
-RUN /usr/local/bin/install-plugins.sh plugins.txt
+COPY plugins.txt /tmp
+RUN /usr/local/bin/install-plugins.sh /tmp/plugins.txt
 
 # Install own maven since the maven packaged by CentOS is ancient
 #COPY apache-maven-bin.tar.gz /tmp/apache-maven-bin.tar.gz
@@ -13,6 +13,6 @@ RUN /usr/local/bin/install-plugins.sh plugins.txt
 #    ln -s /opt/apache-maven/bin/mvn /usr/local/bin/mvn
 
 # Removes OpenShift's sample job
-#RUN rm -rf /opt/openshift/configuration/jobs
+RUN rm -rf /opt/openshift/configuration/jobs
 
 
