@@ -1,0 +1,16 @@
+ansicolor:0.5.2
+custom-tools-plugin:0.5
+envinject:2.1.5
+git-parameter:0.9.0
+sonar:2.6.1
+startup-trigger-plugin:2.8
+timestamper:1.8.9
+analysis-core:1.92
+dependency-check-jenkins-plugin:3.0.2
+maven-plugin:3.0
+cucumber-reports
+workflow-basic-steps:2.5
+workflow-multibranch:2.15
+durable-task:1.17
+github-api:1.89
+locale:1.2
