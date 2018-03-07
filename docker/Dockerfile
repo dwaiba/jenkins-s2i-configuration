@@ -56,8 +56,8 @@ RUN curl -fsSL ${JENKINS_URL} -o /usr/share/jenkins/jenkins.war \
 
 ENV JENKINS_UC https://updates.jenkins.io
 ENV JENKINS_UC_EXPERIMENTAL=https://updates.jenkins.io/experimental
+#RUN chmod +x $JENKINS_HOME/copy_reference_file.log
 ENV COPY_REFERENCE_FILE_LOG $JENKINS_HOME/copy_reference_file.log
-RUN chmod +x $JENKINS_HOME/copy_reference_file.log
 RUN chown -R ${user}:${user} "$JENKINS_HOME" /usr/share/jenkins/ref
 
 # for main web interface:
