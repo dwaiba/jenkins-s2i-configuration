@@ -69,7 +69,7 @@ ENV NEXUS_DATA=/nexus-data \
     NEXUS_VERSION=3.9.0-01 \
     SONATYPE_WORK=${SONATYPE_DIR}/sonatype-work \
     NEXUS_CONTEXT='' \
-    USER_NAME=nexus \
+    USER_NAME=nexus3 \
     USER_UID=200
 
 # Install Nexus and Configure Nexus Runtime Environment
@@ -87,7 +87,7 @@ RUN mkdir -p ${NEXUS_HOME} && \
     useradd -l -u ${USER_UID} -r -g 0 -m -d ${NEXUS_DATA} -s /sbin/no-login \
             -c "${USER_NAME} application user" ${USER_NAME} && \
             mkdir -p ${NEXUS_DATA}/etc ${NEXUS_DATA}/log ${NEXUS_DATA}/tmp ${SONATYPE_WORK} && \
-            ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus3 && \
+            ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus && \
             chown -R ${USER_NAME}:0 ${NEXUS_DATA} && \
             chmod -R g+rw ${NEXUS_DATA} /etc/passwd && \
             chmod ug+x /uid_entrypoint && \
