@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM       registry.access.redhat.com/rhel7/rhel
+FROM    docker.io/centos:latest 
 MAINTAINER Sonatype <cloud-ops@sonatype.com>
 
 # Atomic Labels
 LABEL name="Nexus Repository Manager" \
       vendor="Sonatype" \
-      version="3.7.1-02" \
-      release="3.7.1" \
+      version="3.9.0-01" \
+      release="3.9.0" \
       url="https://sonatype.com" \
       summary="The Nexus Repository Manager server \
           with universal support for popular component formats." \
@@ -33,33 +33,43 @@ LABEL io.k8s.description="The Nexus Repository Manager server \
           with universal support for popular component formats." \
       io.k8s.display-name="Nexus Repository Manager" \
       io.openshift.expose-services="8081:8081" \
-      io.openshift.tags="Sonatype,Nexus,Repository Manager"
+      io.openshift.tags="Sonatype,Nexus"
 
 # Sonatype Labels
 LABEL com.sonatype.license="Apache License, Version 2.0"
+
+# Install Runtime Environment
+#ENV JAVA_VERSION_MAJOR=8 \
+#    JAVA_VERSION_MINOR=161 \
+#    JAVA_VERSION_BUILD=12 \
+#    JAVA_DOWNLOAD_HASH=2f38c3b165be4555a1fa6e98c45e0808
+
+#ENV JAVA_URL=http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-b${JAVA_VERSION_BUILD}/${JAVA_DOWNLOAD_HASH}/ \
+#JAVA_RPM=jdk-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.rpm
+RUN yum install  -y java-1.8.0-openjdk-devel
 
 COPY help.1 uid_entrypoint /
 
 COPY licenses /licenses
 
-# Install Runtime Environment
-RUN set -x && \
-    yum clean all && \
-    REPOLIST=rhel-7-server-rpms,rhel-7-server-optional-rpms,rhel-7-server-thirdparty-oracle-java-rpms \
-    INSTALL_PKGS="tar java-1.8.0-oracle-devel" && \
-    yum -y update-minimal --disablerepo "*" --enablerepo ${REPOLIST} --setopt=tsflags=nodocs \
-      --security --sec-severity=Important --sec-severity=Critical && \
-    yum -y install --disablerepo "*" --enablerepo ${REPOLIST} --setopt=tsflags=nodocs ${INSTALL_PKGS} && \
-    yum clean all
+#yum localinstall -y ${JAVA_RPM} && \
+#curl --remote-name --fail --silent --location --retry 3 \
+#RUN rm -rf /var/cache/yum && yum clean all && yum install -y --setopt=tsflags=nodocs wget tar && \
+#    yum clean all && \
+#    wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+#       "${JAVA_URL}${JAVA_RPM}" && \
+#    rpm -ivh ${JAVA_RPM} && \
+#    yum clean all && \
+#    rm ${JAVA_RPM}
 
 # Install Nexus
 ENV SONATYPE_DIR=/opt/sonatype
 ENV NEXUS_DATA=/nexus-data \
     NEXUS_HOME=${SONATYPE_DIR}/nexus \
-    NEXUS_VERSION=3.7.1-02 \
+    NEXUS_VERSION=3.9.0-01 \
     SONATYPE_WORK=${SONATYPE_DIR}/sonatype-work \
     NEXUS_CONTEXT='' \
-    USER_NAME=nexus3 \
+    USER_NAME=nexus \
     USER_UID=200
 
 # Install Nexus and Configure Nexus Runtime Environment
