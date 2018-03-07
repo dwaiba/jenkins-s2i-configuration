@@ -1,7 +1,7 @@
 #FROM openshift/jenkins-2-centos7
 FROM jenkins/jenkins
 
-USER root
+USER jenkins
 
 COPY plugins.txt /
 RUN /usr/local/bin/install-plugins.sh plugins.txt
@@ -13,5 +13,6 @@ RUN /usr/local/bin/install-plugins.sh plugins.txt
 #    ln -s /opt/apache-maven/bin/mvn /usr/local/bin/mvn
 
 # Removes OpenShift's sample job
-RUN rm -rf /opt/openshift/configuration/jobs
+#RUN rm -rf /opt/openshift/configuration/jobs
+
 
