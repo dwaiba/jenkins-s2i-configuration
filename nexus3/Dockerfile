@@ -87,7 +87,7 @@ RUN mkdir -p ${NEXUS_HOME} && \
     useradd -l -u ${USER_UID} -r -g 0 -m -d ${NEXUS_DATA} -s /sbin/no-login \
             -c "${USER_NAME} application user" ${USER_NAME} && \
             mkdir -p ${NEXUS_DATA}/etc ${NEXUS_DATA}/log ${NEXUS_DATA}/tmp ${SONATYPE_WORK} && \
-            ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus && \
+            ln -s ${NEXUS_DATA} ${SONATYPE_WORK}/nexus3 && \
             chown -R ${USER_NAME}:0 ${NEXUS_DATA} && \
             chmod -R g+rw ${NEXUS_DATA} /etc/passwd && \
             chmod ug+x /uid_entrypoint && \
