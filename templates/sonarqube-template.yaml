@@ -102,7 +102,7 @@ objects:
   metadata:
     name: "${SONAR_SERVICE_NAME}"
     annotations:
-      serviceaccounts.openshift.io/oauth-redirectreference.sonarqube: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${SONAR_SERVICE_NAME}"}}'
+      serviceaccounts.openshift.io/oauth-redirectreferenc.jenkins: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${SONAR_SERVICE_NAME}"}}'
 - kind: RoleBinding
   apiVersion: v1
   metadata:

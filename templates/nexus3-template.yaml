@@ -102,7 +102,7 @@ objects:
   metadata:
     name: "${NEXUS_SERVICE_NAME}"
     annotations:
-      serviceaccounts.openshift.io/oauth-redirectreference.nexus3: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${NEXUS_SERVICE_NAME}"}}'
+      serviceaccounts.openshift.io/oauth-redirectreference.jenkins: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"${NEXUS_SERVICE_NAME}"}}'
 - kind: RoleBinding
   apiVersion: v1
   metadata:
