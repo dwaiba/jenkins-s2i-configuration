@@ -52,11 +52,11 @@ oc new-project $PROJECT_NAME
 #oc import-image custom-jenkins --from=dwaiba/jenkins-2-centos7-om-hosted --confirm --all
 
 
-if [ -z "${DOCKER_USERNAME}" -o -z "${DOCKER_PASSWORD}"  -o -z "${DOCKER_EMAIL}" ]; then
-    echo 'DOCKER_USERNAME and DOCKER_PASSWORD and DOCKER_EMAIL ENV variables should be provided' && exit 1
-fi
-oc secrets new-dockercfg dockerhub --docker-server=docker.io --docker-username=$DOCKER_USERNAME --docker-password=$DOCKER_PASSWORD --docker-email=$DOCKER_EMAIL
-oc secrets link builder dockerhub
+#if [ -z "${DOCKER_USERNAME}" -o -z "${DOCKER_PASSWORD}"  -o -z "${DOCKER_EMAIL}" ]; then
+#    echo 'DOCKER_USERNAME and DOCKER_PASSWORD and DOCKER_EMAIL ENV variables should be provided' && exit 1
+#fi
+#oc secrets new-dockercfg dockerhub --docker-server=docker.io --docker-username=$DOCKER_USERNAME --docker-password=$DOCKER_PASSWORD --docker-email=$DOCKER_EMAIL
+#oc secrets link builder dockerhub
 
 #for SLAVE in java-ubuntu jenkins-tools nodejs-ubuntu nodejs6-ubuntu ruby ruby-fhcap ansible go-centos7 python2-centos7 prod-centos7 nodejs6-centos7
 for SLAVE in jenkins-tools prod-centos7 
@@ -115,5 +115,6 @@ fi
 if [ "${SONAR}" = true ]; then
 oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p SONAR_IMAGE_STREAM_TAG=sonarqubeephemeral:latest -f  $TEMPLATES_DIR/sonarqube-template.yaml
 fi
+ansible-playbook -i blue-green-spring/inventory/hosts ../casl-ansible/playbooks/openshift-cluster-seed.yml --connection=local
 
 

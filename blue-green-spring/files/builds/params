@@ -1,5 +1,5 @@
 APPLICATION_NAME=spring-boot-web
 NAMESPACE=jenkins
-IMAGE_STREAM_TAG_NAME=redhat-openjdk18-openshift:1.1
+IMAGE_STREAM_TAG_NAME=redhat-openjdk18-openshift:1.2
 SOURCE_REPOSITORY_URL=https://github.com/dwaiba/simple-spring-boot-web.git
-SOURCE_REPOSITORY_REF=build
+SOURCE_REPOSITORY_REF=master
