@@ -76,7 +76,7 @@ parameters:
 - description: Git source URI for application
   name: SOURCE_REPOSITORY_URL
   required: true
-  value: https://github.com/malacourse/simple-spring-boot-web.git
+  value: https://github.com/OpenShiftDemos/openshift-tasks.git
 - description: Git branch/tag reference
   name: SOURCE_REPOSITORY_REF
   value: "master"
@@ -85,7 +85,7 @@ parameters:
   value:
 - description: Path within Git project pointing to the pipeline run script
   name: PIPELINE_SCRIPT
-  value: pipeline.groovy
+  value: pipeline-bc.yaml
 - description: GitHub trigger secret
   from: '[a-zA-Z0-9]{8}'
   generate: expression
