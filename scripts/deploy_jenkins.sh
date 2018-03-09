@@ -115,6 +115,10 @@ fi
 if [ "${SONAR}" = true ]; then
 oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p SONAR_IMAGE_STREAM_TAG=sonarqubeephemeral:latest -f  $TEMPLATES_DIR/sonarqube-template.yaml
 fi
+oc create -f ../templates/jenkins-image-template.yaml
+oc create -f ../templates/nexus3-image-template.yaml
+oc create -f ../templates/sonarqube-image-template.yaml
+
 ansible-playbook -i blue-green-spring/inventory/hosts ../casl-ansible/playbooks/openshift-cluster-seed.yml --connection=local
 
 

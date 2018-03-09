@@ -76,7 +76,7 @@ parameters:
 - description: Git source URI for application
   name: SOURCE_REPOSITORY_URL
   required: true
-  value: https://github.com/OpenShiftDemos/openshift-tasks.git
+  value: https://github.com/malacourse/simple-spring-boot-web.git
 - description: Git branch/tag reference
   name: SOURCE_REPOSITORY_REF
   value: "master"

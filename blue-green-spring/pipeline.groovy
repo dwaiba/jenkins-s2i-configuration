@@ -15,13 +15,13 @@ node('master') {
 
   env.APP_NAME = "${env.JOB_NAME}".replaceAll(/-?pipeline-?/, '').replaceAll(/-?${env.NAMESPACE}-?/, '')
   def projectBase = "${env.NAMESPACE}".replaceAll(/-dev/, '')
-  env.STAGE1 = "${projectBase}"
-  env.STAGE2 = "${projectBase}"
-  env.STAGE3 = "${projectBase}"
+  env.STAGE1 = "${projectBase}-dev"
+  env.STAGE2 = "${projectBase}-stage"
+  env.STAGE3 = "${projectBase}-prod"
 
 }
 
-node('master') {
+node('maven') {
   def mvnHome = env.MAVEN_HOME ? "${env.MAVEN_HOME}" : "/usr/share/maven/"
   def mvnCmd = "mvn"
   String pomFileLocation = env.BUILD_CONTEXT_DIR ? "${env.BUILD_CONTEXT_DIR}/pom.xml" : "pom.xml"
