@@ -1,5 +1,5 @@
 APPLICATION_NAME=spring-boot-web
 NAMESPACE=jenkins
 IMAGE_STREAM_TAG_NAME=redhat-openjdk18-openshift:1.1
-SOURCE_REPOSITORY_URL=https://github.com/OpenShiftDemos/openshift-tasks.git
+SOURCE_REPOSITORY_URL=https://github.com/dwaiba/openshift-tasks.git
 SOURCE_REPOSITORY_REF=master
