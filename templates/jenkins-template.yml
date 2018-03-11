@@ -5,7 +5,7 @@ metadata:
   name: jenkins-ose
   creationTimestamp:
   annotations:
-    openshift.io/display-name: Jenkins (jenkins2-deb-ephemeral)
+    openshift.io/display-name: Jenkins (jenkins-2-centos7-ephemeral)
     description: |-
       Jenkins service
     iconClass: icon-jenkins
@@ -180,7 +180,7 @@ parameters:
 - name: JENKINS_IMAGE_STREAM_TAG
   displayName: Jenkins ImageStreamTag
   description: Name of the ImageStreamTag to be used for the Jenkins image.
-  value: jenkins2-deb-ephemeral:latest
+  value: jenkins-2-centos7-ephemeral:latest
 labels:
-  template: jenkins2-deb-ephemeral-template
+  template: jenkins-2-centos7-ephemeral-template
 

@@ -59,9 +59,9 @@ oc new-project $PROJECT_NAME
 #oc secrets link builder dockerhub
 
 #for SLAVE in java-ubuntu jenkins-tools nodejs-ubuntu nodejs6-ubuntu ruby ruby-fhcap ansible go-centos7 python2-centos7 prod-centos7 nodejs6-centos7
-for SLAVE in jenkins-tools prod-centos7 
-do
-    SLAVE_LABELS="$SLAVE ${SLAVE/-/ } openshift"
+#for SLAVE in jenkins-tools prod-centos7 
+#do
+#    SLAVE_LABELS="$SLAVE ${SLAVE/-/ } openshift"
 
 #    if [ "$SLAVE" = "nodejs-ubuntu" ] ; then
 #        SLAVE_LABELS="ubuntu nodejs4-ubuntu"
@@ -74,12 +74,12 @@ do
 #    if [ "$RHNETWORK" = true ] ; then
 #    SLAVE_LABELS="$SLAVE_LABELS rhnetwork"
 #    fi
-    if [ "$BUILD_SLAVES" = true ] ; then
-       oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -p SLAVE_LABEL="$SLAVE_LABELS" -p CONTEXT_DIR=slave-$SLAVE -f $TEMPLATES_DIR/slave-build-template.yml
-    else
-       oc new-app -p SLAVE_LABEL="$SLAVE_LABELS" -p IMAGE_NAME=jenkins-slave-$SLAVE -f  $TEMPLATES_DIR/slave-image-template.yml
-    fi
-done
+#    if [ "$BUILD_SLAVES" = true ] ; then
+#       oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -p SLAVE_LABEL="$SLAVE_LABELS" -p CONTEXT_DIR=slave-$SLAVE -f $TEMPLATES_DIR/slave-build-template.yml
+#    else
+#       oc new-app -p SLAVE_LABEL="$SLAVE_LABELS" -p IMAGE_NAME=jenkins-slave-$SLAVE -f  $TEMPLATES_DIR/slave-image-template.yml
+#    fi
+#done
 
 if [ "$LIMITS" = true ] ; then
     oc new-app -f  $TEMPLATES_DIR/resource-limits.yaml
@@ -94,7 +94,7 @@ if [ "${ENABLE_OAUTH}" = true ]; then
   oc adm policy add-role-to-group view system:authenticated -n $PROJECT_NAME || echo "Adding view access for all users to this project failed. Users need this if they are to log-in."
 fi
 
-oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=4Gi -p NAMESPACE=$PROJECT_NAME -p JENKINS_IMAGE_STREAM_TAG=jenkins2-deb-ephemeral:latest -f  $TEMPLATES_DIR/jenkins-template.yml
+oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=4Gi -p NAMESPACE=$PROJECT_NAME -p JENKINS_IMAGE_STREAM_TAG=jenkins-2-centos7-ephemeral:latest -f  $TEMPLATES_DIR/jenkins-template.yml
 
 if [ "$BUILD_NEXUS" = true ] ; then
     oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -f  $TEMPLATES_DIR/nexus3-build-template.yaml
@@ -115,10 +115,10 @@ fi
 if [ "${SONAR}" = true ]; then
 oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p SONAR_IMAGE_STREAM_TAG=sonarqubeephemeral:latest -f  $TEMPLATES_DIR/sonarqube-template.yaml
 fi
-oc create -f ../templates/jenkins-image-template.yaml
-oc create -f ../templates/nexus3-image-template.yaml
-oc create -f ../templates/sonarqube-image-template.yaml
+oc create -f templates/jenkins-template.yml -n $PROJECT_NAME
+oc create -f templates/nexus3-template.yaml -n $PROJECT_NAME
+oc create -f templates/sonarqube-template.yaml -n $PROJECT_NAME
 
-ansible-playbook -i blue-green-spring/inventory/hosts ../casl-ansible/playbooks/openshift-cluster-seed.yml --connection=local
+#ansible-playbook -i blue-green-spring/inventory/hosts ../casl-ansible/playbooks/openshift-cluster-seed.yml --connection=local
 
 

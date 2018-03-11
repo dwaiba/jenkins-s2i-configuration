@@ -15,7 +15,7 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: jenkins2-deb-ephemeral
+    name: jenkins-2-centos7-ephemeral
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -24,7 +24,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: jenkins2-deb-ephemeral:latest
+        name: jenkins-2-centos7-ephemeral:latest
     runPolicy: Serial
     source:
       git:
