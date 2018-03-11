@@ -115,6 +115,13 @@ fi
 if [ "${SONAR}" = true ]; then
 oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=1Gi -p NAMESPACE=$PROJECT_NAME -p SONAR_IMAGE_STREAM_TAG=sonarqubeephemeral:latest -f  $TEMPLATES_DIR/sonarqube-template.yaml
 fi
+oc create serviceaccount jenkins -n $PROJECT_NAME
+oc create serviceaccount nexus3 -n $PROJECT_NAME
+oc create serviceaccount sonarqube -n $PROJECT_NAME
+oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:jenkins
+oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:nexus3
+oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:sonarqube
+
 oc create -f templates/jenkins-template.yml -n $PROJECT_NAME
 oc create -f templates/nexus3-template.yaml -n $PROJECT_NAME
 oc create -f templates/sonarqube-template.yaml -n $PROJECT_NAME
