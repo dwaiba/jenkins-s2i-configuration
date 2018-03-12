@@ -35,6 +35,9 @@ oc policy add-role-to-user \
     system:image-puller system:serviceaccount:spring-boot-web-build:builder \
     --namespace=jenkins
 oc policy add-role-to-user \
+    system:image-builder system:serviceaccount:spring-boot-web-dev:builder \
+    --namespace=spring-boot-web-build
+oc policy add-role-to-user \
     system:image-puller system:serviceaccount:spring-boot-web-dev:builder \
     --namespace=jenkins
 oc policy add-role-to-user \
