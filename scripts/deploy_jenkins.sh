@@ -102,9 +102,9 @@ oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=4Gi -p NAMESPACE=$PROJE
 
 if [ "$BUILD_NEXUS" = true ] ; then
     oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -f  $TEMPLATES_DIR/nexus3-build-template.yaml
-    #oc delete template jenkins-ose -n openshift
-    #oc delete template nexus3-ose -n openshift
-    #oc delete template sonarqube -n openshift
+    oc delete template jenkins-ose -n openshift
+    oc delete template nexus3-ose -n openshift
+    oc delete template sonarqube -n openshift
 else
     oc new-app -f  $TEMPLATES_DIR/nexus3-image-template.yaml
 fi
