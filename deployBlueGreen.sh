@@ -27,15 +27,33 @@ oc policy add-role-to-user \
 oc policy add-role-to-user \
     system:image-puller system:serviceaccount:spring-boot-web-prod:default \
     --namespace=jenkins
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-stage:default \
+    --namespace=jenkins
 
 oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:spring-boot-web-build:spring-boot-web-build \
+    system:image-puller system:serviceaccount:spring-boot-web-build:builder \
     --namespace=jenkins
 oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:spring-boot-web-dev:spring-boot-web-build \
+    system:image-puller system:serviceaccount:spring-boot-web-dev:builder \
     --namespace=jenkins
 oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:spring-boot-web-prod:spring-boot-web-build \
+    system:image-puller system:serviceaccount:spring-boot-web-prod:builder \
+    --namespace=jenkins
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-stage:builder \
+    --namespace=jenkins
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-build:deployer \
+    --namespace=jenkins
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-dev:deployer \
+    --namespace=jenkins
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-prod:deployer \
+    --namespace=jenkins
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-stage:deployer \
     --namespace=jenkins
 oc policy add-role-to-user \
     system:image-puller system:serviceaccount:spring-boot-web-build:jenkins \
@@ -47,11 +65,5 @@ oc policy add-role-to-user \
     system:image-puller system:serviceaccount:spring-boot-web-prod:jenkins \
     --namespace=jenkins
 oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:spring-boot-web-build:deployer \
-    --namespace=jenkins
-oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:spring-boot-web-dev:deployer \
-    --namespace=jenkins
-oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:spring-boot-web-prod:deployer \
+    system:image-puller system:serviceaccount:spring-boot-web-stage:jenkins \
     --namespace=jenkins
