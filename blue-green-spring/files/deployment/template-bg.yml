@@ -221,7 +221,7 @@ parameters:
 - description: The namespace to deploy into
   name: NAMESPACE
   required: true
-- descriptiondd: Name of a service account that can deploy to this project
+- description: Name of a service account that can deploy to this project
   name: SA_NAME
   required: true
   value: jenkins
