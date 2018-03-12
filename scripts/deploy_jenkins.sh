@@ -86,6 +86,10 @@ if [ "$LIMITS" = true ] ; then
 fi
 
 if [ "$BUILD_MASTER" = true ] ; then
+    rm -rf jenkins
+    git clone https://github.com/openshift/jenkins.git
+    mv jenkins/2/Dockerfile jenkins/2/Dockerfile.open
+    mv jenkins/2/Dockerfile.rhel7 jenkins/2/Dockerfile
     oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -f  $TEMPLATES_DIR/jenkins-build-template.yaml
 else
     oc new-app -f  $TEMPLATES_DIR/jenkins-image-template.yaml
