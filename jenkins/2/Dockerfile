@@ -1,17 +1,19 @@
-FROM registry.access.redhat.com/openshift3/ose
+FROM openshift/origin
 
 # Jenkins image for OpenShift
 #
 # This image provides a Jenkins server, primarily intended for integration with
 # OpenShift v3.
 #
-# Volumes: 
+# Volumes:
 # * /var/jenkins_home
 # Environment:
 # * $JENKINS_PASSWORD - Password for the Jenkins 'admin' user.
 
 MAINTAINER Ben Parees <bparees@redhat.com>
 
+# Jenkins LTS packages from
+# https://pkg.jenkins.io/redhat-stable/
 ENV JENKINS_VERSION=2 \
     HOME=/var/lib/jenkins \
     JENKINS_HOME=/var/lib/jenkins \
@@ -20,30 +22,21 @@ ENV JENKINS_VERSION=2 \
     LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
 
-LABEL io.k8s.description="Jenkins is a continuous integration server" \
-      io.k8s.display-name="Jenkins 2" \
-      io.openshift.tags="jenkins,jenkins2,ci" \
-      io.openshift.expose-services="8080:http" \
+LABEL k8s.io.description="Jenkins is a continuous integration server" \
+      k8s.io.display-name="Jenkins 2" \
+      openshift.io.expose-services="8080:http" \
+      openshift.io.tags="jenkins,jenkins2,ci" \
       io.openshift.s2i.scripts-url=image:///usr/libexec/s2i
-
-# Labels consumed by Red Hat build service
-LABEL com.redhat.component="openshift-jenkins-2-docker" \
-      name="openshift3/jenkins-2-rhel7" \
-      version="3.10" \
-      architecture="x86_64" \
-      release="7"
 
 # 8080 for main web interface, 50000 for slave agents
 EXPOSE 8080 50000
 
-RUN yum-config-manager --disable epel >/dev/null || : && \
-    yum-config-manager --enable rhel-7-server-ose-onlineint-rpms || : && \
-    # for backward compatibility with pre-3.6 installs leveraging a PV, where rpm installs went to /usr/lib64/jenkins, we are
-    # establishing a symbolic link for that guy as well, so that existing plugins in JENKINS_HOME/plugins pointing to /usr/lib64/jenkins
-    # will subsequently get redirected to /usr/lib/jenkins; it is confirmed that the 3.7 jenkins RHEL images do *NOT* have a /usr/lib64/jenkins path
-    ln -s /usr/lib/jenkins /usr/lib64/jenkins && \
-    INSTALL_PKGS="dejavu-sans-fonts wget rsync gettext git tar zip unzip dumb-init  java-1.8.0-openjdk java-1.8.0-openjdk.i686 java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 atomic-openshift-clients jenkins-2.* jenkins-2-plugins" && \
-    yum install -y $INSTALL_PKGS && \
+RUN curl https://pkg.jenkins.io/redhat-stable/jenkins.repo -o /etc/yum.repos.d/jenkins.repo && \
+    rpm --import https://pkg.jenkins.io/redhat-stable/jenkins-ci.org.key && \
+    yum install -y centos-release-scl-rh && \
+    curl https://copr.fedorainfracloud.org/coprs/alsadi/dumb-init/repo/epel-7/alsadi-dumb-init-epel-7.repo -o /etc/yum.repos.d/alsadi-dumb-init-epel-7.repo && \
+    INSTALL_PKGS="dejavu-sans-fonts rsync gettext git tar zip unzip dumb-init java-1.8.0-openjdk java-1.8.0-openjdk.i686 java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 jenkins-2.89.4-1.1" && \
+    yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     yum clean all  && \
     localedef -f UTF-8 -i en_US en_US.UTF-8
@@ -53,15 +46,11 @@ COPY ./contrib/jenkins /usr/local/bin
 ADD ./contrib/s2i /usr/libexec/s2i
 ADD release.version /tmp/release.version
 
-# Remove the base-plugins.txt file because it's only used for Centos
-# and its presence in the rhel image is confusing.
-RUN rm /opt/openshift/base-plugins.txt && \ 
-    mkdir -p /opt/openshift/plugins && \
-    # we symlink the rpm installed plugins from /usr/lib/jenkins to /opt/openshift/plugins so that
-    # future upgrades of the image and their RPM install automatically get picked by jenkins;
-    # we use symlinks vs. actual files to delineate whether the user has overridden a plugin (and
-    # by extension taken over its future maintenance)
-    for FILENAME in /usr/lib/jenkins/*hpi ; do ln -s $FILENAME /opt/openshift/plugins/`basename $FILENAME .hpi`.jpi; done &&\
+RUN /usr/local/bin/install-plugins.sh /opt/openshift/base-plugins.txt && \
+    # need to create <plugin>.pinned files when upgrading "core" plugins like credentials or subversion that are bundled with the jenkins server
+    # Currently jenkins v2 does not embed any plugins, but for reference:
+    # touch /opt/openshift/plugins/credentials.jpi.pinned && \
+    rmdir /var/log/jenkins && \
     chmod 775 /etc/passwd && \
     chmod -R 775 /etc/alternatives && \
     chmod -R 775 /var/lib/alternatives && \
@@ -93,14 +82,8 @@ RUN rm /opt/openshift/base-plugins.txt && \
     unlink /usr/share/man/man1/servertool.1.gz && \
     unlink /usr/share/man/man1/tnameserv.1.gz && \
     unlink /usr/share/man/man1/unpack200.1.gz && \
-    # need to create <plugin>.pinned files when upgrading "core" plugins like credentials or subversion that are bundled with the jenkins server
-    # Currently jenkins v2 does not embed any plugins, but for reference:
-    # touch /opt/openshift/plugins/credentials.jpi.pinned && \
-    rmdir /var/log/jenkins && \
-    /usr/local/bin/fix-permissions /opt/openshift && \
     chown -R 1001:0 /opt/openshift && \
-    # the prior chown doesn't traverse the /opt/openshift/plugins links .. this one will assist fix-permission/assemble for extension builds like master/slave
-    chown 1001:0 /usr/lib/jenkins/*hpi && \ 
+    /usr/local/bin/fix-permissions /opt/openshift && \
     /usr/local/bin/fix-permissions /var/lib/jenkins && \
     /usr/local/bin/fix-permissions /var/log
 
