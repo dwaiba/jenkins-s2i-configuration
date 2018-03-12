@@ -10,7 +10,7 @@ mv container-pipelines/blue-green-spring/ .
 
 rm -rf container-pipelines
 
-grep -rL "jenkins//ose-ephemeral" blue-green-spring | xargs sed -i 's/openshift\/\/jenkins-ephemeral/jenkins\/\/jenkins-ose/g'
+grep -rL "openshift//jenkins-ephemeral" blue-green-spring | xargs sed -i 's/openshift\/\/jenkins-ephemeral/openshift\/\/jenkins-ose/g'
 
 grep -rl "malacourse" blue-green-spring | xargs sed -i 's/malacourse/dwaiba/g'
 grep -rl "pabrahamsson" blue-green-spring | xargs sed -i 's/pabrahamsson/dwaiba/g'

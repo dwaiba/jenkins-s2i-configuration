@@ -102,6 +102,9 @@ oc new-app -p ENABLE_OAUTH=$ENABLE_OAUTH -p MEMORY_LIMIT=4Gi -p NAMESPACE=$PROJE
 
 if [ "$BUILD_NEXUS" = true ] ; then
     oc new-app -p GITHUB_ORG=$GH_ORG -p GITHUB_REF=$GH_REF -f  $TEMPLATES_DIR/nexus3-build-template.yaml
+    oc delete template jenkins-ose -n openshift
+    oc delete template nexus3-ose -n openshift
+    oc delete template sonarqube -n openshift
 else
     oc new-app -f  $TEMPLATES_DIR/nexus3-image-template.yaml
 fi
@@ -126,9 +129,9 @@ oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:jen
 oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:nexus3
 oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:sonarqube
 
-oc create -f templates/jenkins-template.yml -n $PROJECT_NAME
-oc create -f templates/nexus3-template.yaml -n $PROJECT_NAME
-oc create -f templates/sonarqube-template.yaml -n $PROJECT_NAME
+oc create -f templates/jenkins-template.yml -n openshift
+oc create -f templates/nexus3-template.yaml -n openshift
+oc create -f templates/sonarqube-template.yaml -n openshift
 
 #ansible-playbook -i blue-green-spring/inventory/hosts ../casl-ansible/playbooks/openshift-cluster-seed.yml --connection=local
 
