@@ -1,4 +1,20 @@
-ansible-playbook -i inventory/hosts ../casl-ansible/playbooks/openshift-cluster-seed.yml --connection=local
+rm -rf openshift-applier
+
+rm -rf blue-green-spring
+
+#git clone https://github.com/redhat-cop/casl-ansible.git
+git clone https://github.com/redhat-cop/openshift-applier
+git clone https://github.com/redhat-cop/container-pipelines.git
+
+mv container-pipelines/blue-green-spring/ .
+
+rm -rf container-pipelines
+
+grep -rl "openshift//jenkins-ephemeral" .| xargs sed -i 's/openshift\/\/jenkins-ephemeral/jenkins\/\/jenkins-ose/g'
+
+grep -rl "malacourse" .| xargs sed -i 's/malacourse/dwaiba/g'
+
+ansible-playbook -i blue-green-spring/inventory/hosts openshift-applier/playbooks/openshift-cluster-seed.yml --connection=local
 
 
 oc policy add-role-to-user \
