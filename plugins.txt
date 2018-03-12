@@ -13,4 +13,5 @@ workflow-basic-steps:latest
 workflow-multibranch:latest
 durable-task:latest
 github-api:latest
+kubernetes:latest
 locale:latest
