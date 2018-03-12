@@ -10,9 +10,10 @@ mv container-pipelines/blue-green-spring/ .
 
 rm -rf container-pipelines
 
-grep -rl "openshift//jenkins-ephemeral" .| xargs sed -i 's/openshift\/\/jenkins-ephemeral/jenkins\/\/jenkins-ose/g'
+grep -rl "jenkins//jenkins-ose" .| xargs sed -i 's/openshift\/\/jenkins-ephemeral/jenkins\/\/jenkins-ose/g'
 
-grep -rl "malacourse" .| xargs sed -i 's/malacourse/dwaiba/g'
+grep -rl "dwaiba" .| xargs sed -i 's/pabrahamsson/dwaiba/g'
+grep -rl "dwaiba" .| xargs sed -i 's/malacourse/dwaiba/g'
 
 ansible-playbook -i blue-green-spring/inventory/hosts openshift-applier/playbooks/openshift-cluster-seed.yml --connection=local
 
