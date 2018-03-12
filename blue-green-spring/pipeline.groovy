@@ -21,7 +21,7 @@ node('master') {
 
 }
 
-node('maven') {
+node('master') {
   def mvnHome = env.MAVEN_HOME ? "${env.MAVEN_HOME}" : "/usr/share/maven/"
   def mvnCmd = "mvn"
   String pomFileLocation = env.BUILD_CONTEXT_DIR ? "${env.BUILD_CONTEXT_DIR}/pom.xml" : "pom.xml"
@@ -29,7 +29,7 @@ node('maven') {
   stage('SCM Checkout') {
 
     checkout scm
-    sh "orig=\$(pwd); cd \$(dirname ${pomFileLocation}); git describe --tags; cd \$orig"
+    sh "orig=\$(pwd); cd \$(dirname ${pomFileLocation}); #git describe --tags; cd \$orig"
   }
 
   stage('Build') {
