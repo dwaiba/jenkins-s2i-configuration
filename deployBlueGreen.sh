@@ -3,6 +3,7 @@ rm -rf openshift-applier
 rm -rf blue-green-spring
 
 #git clone https://github.com/redhat-cop/casl-ansible.git
+###
 git clone https://github.com/redhat-cop/openshift-applier
 git clone https://github.com/redhat-cop/container-pipelines.git
 
