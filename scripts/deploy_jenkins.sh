@@ -80,7 +80,7 @@ fi
 #       oc new-app -p SLAVE_LABEL="$SLAVE_LABELS" -p IMAGE_NAME=jenkins-slave-$SLAVE -f  $TEMPLATES_DIR/slave-image-template.yml
 #    fi
 #done
-
+#Offlimit
 #if [ "$LIMITS" = true ] ; then
 #    oc new-app -f  $TEMPLATES_DIR/resource-limits.yaml
 #fi
