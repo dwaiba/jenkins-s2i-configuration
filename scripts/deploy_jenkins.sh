@@ -125,14 +125,13 @@ fi
 #oc create serviceaccount jenkins -n $PROJECT_NAME
 #oc create serviceaccount nexus3 -n $PROJECT_NAME
 #oc create serviceaccount sonarqube -n $PROJECT_NAME
-oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:jenkins
-oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:nexus3
-oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:sonarqube
+#oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:jenkins
+#oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:nexus3
+#oc adm policy add-scc-to-user privileged system:serviceaccount:$PROJECT_NAME:sonarqube
 
 oc create -f templates/jenkins-template.yml -n openshift
 oc create -f templates/nexus3-template.yaml -n openshift
 oc create -f templates/sonarqube-template.yaml -n openshift
 
 #ansible-playbook -i blue-green-spring/inventory/hosts ../casl-ansible/playbooks/openshift-cluster-seed.yml --connection=local
-
 
