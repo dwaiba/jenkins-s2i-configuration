@@ -7,7 +7,7 @@ objects:
 - apiVersion: v1
   kind: "LimitRange"
   metadata:
-    name: jenkins-resource-limits
+    name: openshift-resource-limits
   spec:
     limits:
       - type: Container

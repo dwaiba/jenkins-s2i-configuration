@@ -48,7 +48,7 @@ if [ -z "${ENABLE_OAUTH}" ]; then
    ENABLE_OAUTH=false
 fi
 
-oc new-project $PROJECT_NAME
+#oc new-project $PROJECT_NAME
 #oc import-image custom-jenkins --from=dwaiba/jenkins-2-centos7-om-hosted --confirm --all
 
 
@@ -81,9 +81,9 @@ oc new-project $PROJECT_NAME
 #    fi
 #done
 
-if [ "$LIMITS" = true ] ; then
-    oc new-app -f  $TEMPLATES_DIR/resource-limits.yaml
-fi
+#if [ "$LIMITS" = true ] ; then
+#    oc new-app -f  $TEMPLATES_DIR/resource-limits.yaml
+#fi
 
 if [ "$BUILD_MASTER" = true ] ; then
     #rm -rf jenkins
