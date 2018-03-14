@@ -37,9 +37,24 @@ ansible-playbook -i blue-green-spring/inventory/hosts openshift-applier/playbook
 #oc policy add-role-to-user \
    # system:image-puller system:serviceaccount:spring-boot-web-build:builder \
    # --namespace=jenkins
-#oc policy add-role-to-user \
-    #system:image-builder system:serviceaccount:spring-boot-web-dev:builder \
-    #--namespace=spring-boot-web-build
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-build:deployer \
+    --namespace=openshift
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-dev:deployer \
+    --namespace=spring-boot-web-build
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-stage:deployer \
+    --namespace=spring-boot-web-dev
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-prod:deployer \
+    --namespace=spring-boot-web-stage
+oc policy add-role-to-user \
+    system:image-builder system:serviceaccount:spring-boot-web-dev:builder \
+    --namespace=spring-boot-web-build
+oc policy add-role-to-user \
+    system:image-builder system:serviceaccount:spring-boot-web-build:builder \
+    --namespace=spring-boot-web-build
 #oc policy add-role-to-user \
     #system:image-puller system:serviceaccount:spring-boot-web-dev:builder \
     #--namespace=jenkins
@@ -73,3 +88,26 @@ ansible-playbook -i blue-green-spring/inventory/hosts openshift-applier/playbook
 #oc policy add-role-to-user \
     #system:image-puller system:serviceaccount:spring-boot-web-stage:jenkins \
     #--namespace=jenkins
+oc policy add-role-to-user \
+    system:image-pusher system:serviceaccount:spring-boot-web-builder:builder \
+    --namespace=spring-boot-web-dev
+
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-dev:builder \
+    --namespace=spring-boot-web-build
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-dev:deployer \
+    --namespace=spring-boot-web-build
+
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-stage:builder \
+    --namespace=spring-boot-web-dev
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-stage:deployer \
+    --namespace=spring-boot-web-dev
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-prod:builder \
+    --namespace=spring-boot-web-stage
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:spring-boot-web-prod:deployer \
+    --namespace=spring-boot-web-stage
