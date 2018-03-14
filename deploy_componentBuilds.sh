@@ -1,3 +1,4 @@
+oc project openshift
 oc delete serviceaccount jenkins nexus3 sonarqube -n openshift
 oc delete rolebindings jenkins_edit sonarqube_edit nexus3_edit -n openshift
 oc delete bc jenkins  nexus3 sonarqube -n openshift
