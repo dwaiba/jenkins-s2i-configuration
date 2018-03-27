@@ -200,5 +200,5 @@ parameters:
   - description: Name of the ImageStreamTag to be used for the Jenkins image.
     displayName: Jenkins ImageStreamTag
     name: JENKINS_IMAGE_STREAM_TAG
-    value: 'jenkins-2-centos7-ephemeral:latest'
+    value: 'jenkins-2-rhel74-ephemeral:latest'
 
