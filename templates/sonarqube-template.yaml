@@ -146,7 +146,7 @@ parameters:
 - name: NAMESPACE
   displayName: SonarQube ImageStream Namespace
   description: The SonarQube Namespace where the SonarQube ImageStream resides.
-  value: openshift
+  value: openshift-node
 - name: SONAR_IMAGE_STREAM_TAG
   displayName: SonarQube ImageStreamTag
   description: Name of the ImageStreamTag to be used for the SonarQube image.

@@ -81,7 +81,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: jenkins:latest
-          namespace: openshift
+          namespace: openshift-node
       type: Docker
     successfulBuildsHistoryLimit: 5
     triggers:
