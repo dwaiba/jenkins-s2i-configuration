@@ -28,7 +28,7 @@ metadata:
     tags: 'instant-app,jenkins'
   creationTimestamp: '2018-03-12T16:17:53Z'
   name: jenkins-ose
-  namespace: openshift-node
+  namespace: openshift
   resourceVersion: '2792'
   selfLink: >-
     /apis/template.openshift.io/v1/namespaces/openshift/templates/jenkins-ose
@@ -196,7 +196,7 @@ parameters:
   - description: The OpenShift Namespace where the Jenkins ImageStream resides.
     displayName: Jenkins ImageStream Namespace
     name: NAMESPACE
-    value: openshift-node
+    value: openshift
   - description: Name of the ImageStreamTag to be used for the Jenkins image.
     displayName: Jenkins ImageStreamTag
     name: JENKINS_IMAGE_STREAM_TAG

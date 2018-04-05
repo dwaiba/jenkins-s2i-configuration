@@ -13,7 +13,7 @@ mv container-pipelines/blue-green-spring/ .
 
 rm -rf container-pipelines
 
-grep -rl "openshift//jenkins-ephemeral" blue-green-spring | xargs sed -i 's/openshift\/\/jenkins-ephemeral/openshift-node\/\/jenkins-ose/g'
+grep -rl "openshift//jenkins-ephemeral" blue-green-spring | xargs sed -i 's/openshift\/\/jenkins-ephemeral/openshift\/\/jenkins-ose/g'
 
 grep -rl "malacourse" blue-green-spring | xargs sed -i 's/malacourse/dwaiba/g'
 grep -rl "pabrahamsson" blue-green-spring | xargs sed -i 's/pabrahamsson/dwaiba/g'
@@ -39,7 +39,7 @@ ansible-playbook -i blue-green-spring/inventory/hosts openshift-applier/playbook
    # --namespace=jenkins
 oc policy add-role-to-user \
     system:image-puller system:serviceaccount:spring-boot-web-build:deployer \
-    --namespace=openshift-node
+    --namespace=openshift
 oc policy add-role-to-user \
     system:image-puller system:serviceaccount:spring-boot-web-dev:deployer \
     --namespace=spring-boot-web-build

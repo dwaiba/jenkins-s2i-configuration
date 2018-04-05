@@ -146,7 +146,7 @@ parameters:
 - name: NAMESPACE
   displayName: Nexus3 ImageStream Namespace
   description: The Nexus3 Namespace where the Nexus3 ImageStream resides.
-  value: openshift-node
+  value: openshift
 - name: NEXUS_IMAGE_STREAM_TAG
   displayName: Nexus3 ImageStreamTag
   description: Name of the ImageStreamTag to be used for the Nexus3 image.
