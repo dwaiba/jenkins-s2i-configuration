@@ -1,6 +1,6 @@
 FROM jboss/base-jdk:8
 
-ENV SONAR_VERSION=7.0 \
+ENV SONAR_VERSION=7.2 \
     SONARQUBE_HOME=/opt/sonarqube \
     SONARQUBE_JDBC_USERNAME=sonar \
     SONARQUBE_JDBC_PASSWORD=sonar \
