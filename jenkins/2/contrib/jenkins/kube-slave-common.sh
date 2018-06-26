@@ -72,8 +72,11 @@ fi
 # generate_kubernetes_config generates a configuration for the kubernetes plugin
 function generate_kubernetes_config() {
     [ -z "$oc_cmd" ] && return
-    [ ! has_service_account ] && return
-    local crt_contents=$(cat "${KUBE_CA}")
+    [ ! has_service_account ] && return   
+    local crt_contents=$(openssl x509 -in "${KUBE_CA}")
+    if [ $? -eq 1 ] ; then
+      crt_contents=""
+    fi
     echo "
     <org.csanchez.jenkins.plugins.kubernetes.KubernetesCloud>
       <name>openshift</name>
@@ -143,6 +146,7 @@ function generate_kubernetes_config() {
       </templates>
       <serverUrl>https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}</serverUrl>
       <skipTlsVerify>false</skipTlsVerify>
+      <addMasterProxyEnvVars>true</addMasterProxyEnvVars>
       <serverCertificate>${crt_contents}</serverCertificate>
       <namespace>${PROJECT_NAME}</namespace>
       <jenkinsUrl>http://${JENKINS_SERVICE_HOST}:${JENKINS_SERVICE_PORT}</jenkinsUrl>
