@@ -142,7 +142,7 @@ parameters:
 - name: MEMORY_LIMIT
   displayName: Memory Limit
   description: Maximum amount of memory the container can use.
-  value: 4Gi
+  value: 5Gi
 - name: NAMESPACE
   displayName: SonarQube ImageStream Namespace
   description: The SonarQube Namespace where the SonarQube ImageStream resides.
