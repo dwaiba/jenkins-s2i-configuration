@@ -1,3 +1,21 @@
+# Specific Plugins
+ansicolor:latest
+custom-tools-plugin:latest
+envinject:latest
+git-parameter:latest
+sonar:latest
+startup-trigger-plugin:latest
+timestamper:latest
+analysis-core:latest
+dependency-check-jenkins-plugin:latest
+maven-plugin:latest
+cucumber-reports:latest
+workflow-basic-steps:latest
+workflow-multibranch:latest
+durable-task:latest
+github-api:latest
+locale:latest
+
 openshift-pipeline:1.0.54
 openshift-login:1.0.9
 openshift-client:1.0.13
