@@ -1,31 +1,18 @@
-# Specific Plugins
-ansicolor:latest
-custom-tools-plugin:latest
-envinject:latest
-git-parameter:latest
-sonar:latest
-startup-trigger-plugin:latest
-timestamper:latest
-analysis-core:latest
-dependency-check-jenkins-plugin:latest
-maven-plugin:latest
-cucumber-reports:latest
-workflow-basic-steps:latest
-workflow-multibranch:latest
-durable-task:latest
-github-api:latest
-locale:latest
-
 openshift-pipeline:1.0.54
-openshift-login:1.0.5
-openshift-client:1.0.7
+openshift-login:1.0.9
+openshift-client:1.0.13
 
 
 # kubernetes plugin - https://wiki.jenkins-ci.org/display/JENKINS/Kubernetes+Plugin
-kubernetes:1.2
+# 1.6.0 has the support we added for allowing the use of pod yaml for pod template
+# config from the config panel (there was a flavor for this already with the k8s plugin's
+# pipeline DSL, and 1.6.2 has the support for opting in the transfer of proxy related
+# env vars from the master to the client, and 1.7.1 fixes
+# https://issues.jenkins-ci.org/browse/SECURITY-883
+kubernetes:1.7.1
 
 # fabric8 openshift sync
-openshift-sync:1.0.8
+openshift-sync:1.0.20
 
 # explicitly pull in plugins previously pulled in by dependencies because of
 # security advisories  ...exclude plugins from
@@ -39,7 +26,12 @@ openshift-sync:1.0.8
 # processed sec adv https://jenkins.io/security/advisory/2018-02-05/
 # processed sec adv https://jenkins.io/security/advisory/2018-02-14/
 # processed sec adv https://jenkins.io/security/advisory/2018-02-26/
+# processed sec adv https://jenkins.io/security/advisory/2018-03-26/
+# processed sec adv https://jenkins.io/security/advisory/2018-04-16/
+# processed sec adv https://jenkins.io/security/advisory/2018-06-04/
 #
+htmlpublisher:1.16
+mailer:1.21
 config-file-provider:2.17
 docker-commons:1.11
 job-dsl:1.68
@@ -51,9 +43,11 @@ credentials-binding:1.15
 junit:1.24
 workflow-durable-task-step:2.18
 workflow-support:2.18
-git:3.8.0
+git:3.9.1
 mercurial:2.3
 subversion:2.10.3
+github:1.29.1
+github-branch-source:2.3.6
 
 # Legacy stuff
 mapdb-api:1.0.9.0
@@ -79,4 +73,3 @@ blueocean:1.4.1
 # 2.5 now includes pipeline-model-definition (declaritive pipeline)
 # 2.4 brought in pipeline-milestone-step
 workflow-aggregator:2.5
-
