@@ -26,6 +26,7 @@ RUN set -x \
     && mv sonarqube-$SONAR_VERSION sonarqube \
     && rm sonarqube.zip* \
     && rm -rf $SONARQUBE_HOME/bin/*
+    && sysctl -w vm.max_map_count=262144
 
 WORKDIR $SONARQUBE_HOME
 COPY run.sh $SONARQUBE_HOME/bin/
