@@ -29,7 +29,7 @@ RUN set -x \
 
 WORKDIR $SONARQUBE_HOME
 COPY run.sh $SONARQUBE_HOME/bin/
-RUN sysctl -w vm.max_map_count=262144
+RUN cat vm.max_map_count=262144 >> /etc/sysctl.conf
 RUN useradd -r sonar
 RUN /usr/bin/fix-permissions $SONARQUBE_HOME \
     && chmod 775 $SONARQUBE_HOME/bin/run.sh
