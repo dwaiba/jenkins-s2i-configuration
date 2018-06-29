@@ -25,12 +25,11 @@ RUN set -x \
     && unzip sonarqube.zip \
     && mv sonarqube-$SONAR_VERSION sonarqube \
     && rm sonarqube.zip* \
-    && rm -rf $SONARQUBE_HOME/bin/* \
-    && sysctl -w vm.max_map_count=262144
+    && rm -rf $SONARQUBE_HOME/bin/*
 
 WORKDIR $SONARQUBE_HOME
 COPY run.sh $SONARQUBE_HOME/bin/
-
+RUN sysctl -w vm.max_map_count=262144
 RUN useradd -r sonar
 RUN /usr/bin/fix-permissions $SONARQUBE_HOME \
     && chmod 775 $SONARQUBE_HOME/bin/run.sh
