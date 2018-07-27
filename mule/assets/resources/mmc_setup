@@ -1,0 +1,66 @@
+#!/bin/bash
+set -e
+
+if [[ "$MULE_MMC_URL" != "" && "$MULE_MMC_AGENT_HOST" != "" && "${MULE_AMC_TOKEN}" == "" ]]; then
+
+	MULE_CMD_AUTH=""
+	if [[ "$MULE_MMC_HEADER_AUTH" == "" ]]; then
+		
+		echo "NOTICE: MMC Authorization Header not specified. Checking basic username and password..."
+		if [[ "$MULE_MMC_USERNAME" != "" && "$MULE_MMC_PASSWORD" != "" ]]; then
+			MULE_CMD_AUTH="--basic -u ${MULE_MMC_USERNAME}:${MULE_MMC_PASSWORD}"
+		else
+			# set to default auth if not set
+			MULE_CMD_AUTH="-H Authorization:Basic YWRtaW46YWRtaW4="
+		fi
+
+		# check the server group
+		if [[ "$MULE_MMC_SERVER_GROUP" != "" ]]; then
+
+			##########################
+			# get the group ID
+			GROUP_NAME="$MULE_MMC_SERVER_GROUP"
+			GROUP_ID=""
+			MULE_SERVER_GROUPS=$(curl $MULE_CMD_AUTH ${MULE_MMC_URL}/api/serverGroups/)
+
+			MULE_GROUP_TOTAL=$(echo $MULE_SERVER_GROUPS | jq '.total')
+			CURSOR=0
+			while [ $CURSOR -le $(( $MULE_GROUP_TOTAL -1 )) ]
+			do
+					#echo $CURSOR
+					#echo $MULE_SERVER_GROUPS | jq ".data[$CURSOR].name"
+					CURRENT_GROUP_NAME=$(echo $MULE_SERVER_GROUPS | jq ".data[$CURSOR].name")
+					if [ "$CURRENT_GROUP_NAME" == "\"$GROUP_NAME\"" ]
+					then
+							GROUP_ID=$(echo $MULE_SERVER_GROUPS | jq ".data[$CURSOR].id" | tr -d '"')
+							break;
+					fi
+					CURSOR=$(($CURSOR + 1))
+			done
+
+			# if group is still empty, then create it. then get the group id
+			if [[ "$GROUP_ID" == "" ]]; then
+				echo "NOTICE: Group $GROUP_NAME not found. Creating it..."
+
+				MULE_CREATE_GROUP_RESPONSE=$(curl $MULE_CMD_AUTH -H "Content-Type: application/json" -d "{ \"name\" : \"$GROUP_NAME\"}"  ${MULE_MMC_URL}/api/serverGroups)
+				GROUP_ID=$(echo $MULE_CREATE_GROUP_RESPONSE | jq ".id" | tr -d '"')
+
+				echo "NOTICE: Created new Group ID : $GROUP_ID"
+			else
+				echo "NOTICE: Retrieved Group ID : $GROUP_ID"
+			fi
+			##########################
+			
+			echo "NOTICE: Registering ${MULE_ESB_NAME} into ${MULE_MMC_URL} with group ${GROUP_NAME}..."
+			MULE_REGISTER_RESPONSE=$(curl $MULE_CMD_AUTH -H "Content-Type: application/json" -d "{ \"name\" : \"$MULE_ESB_NAME\", \"agentUrl\" : \"http://${MULE_MMC_AGENT_HOST}:${MULE_MMC_AGENT_PORT}/mmc-support\",\"groupIds\":[\"${GROUP_ID}\"] }"  ${MULE_MMC_URL}/api/servers)
+		else
+			# server group is empty, then proceed without it.
+			echo "NOTICE: Registering ${MULE_ESB_NAME} into ${MULE_MMC_URL} without a group..."
+			MULE_REGISTER_RESPONSE=$(curl $MULE_CMD_AUTH -H "Content-Type: application/json" -d "{ \"name\" : \"$MULE_ESB_NAME\", \"agentUrl\" : \"http://${MULE_MMC_AGENT_HOST}:${MULE_MMC_AGENT_PORT}/mmc-support\" }"  ${MULE_MMC_URL}/api/servers)					
+		fi
+			# display response
+			echo $MULE_REGISTER_RESPONSE
+	fi	
+else
+	echo "ERROR: Aborting MMC registration, you can configure/register Mule ESB to either one, but not both."		
+fi
