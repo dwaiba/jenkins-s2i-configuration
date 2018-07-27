@@ -5,8 +5,10 @@ set -e
 
 # set the mule repo url. To build locally, these variables needs to be set manually.
 
-MULE_RUNTIME_VERSION=$(cat /opt/VERSION)
-MULE_EDITION=$(cat /opt/EDITION)
+#MULE_RUNTIME_VERSION=$(cat /opt/VERSION)
+MULE_RUNTIME_VERSION="4.1.2"
+#MULE_EDITION=$(cat /opt/EDITION)
+MULE_EDITION="ee"
 AUTHORIZATION=$(cat /opt/AUTHORIZATION)
 MULE_AGENT_UPDATE_VERSION=$(cat /opt/MULE_AGENT_UPDATE_VERSION)
 MULE_AGENT_UPDATE_URL_SECOND=$(cat /opt/MULE_AGENT_UPDATE_URL_SECOND)
