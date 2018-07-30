@@ -20,8 +20,8 @@ LABEL name="Nexus Repository Manager" \
       vendor="Sonatype" \
      # version="3.9.0-01" \
      # release="3.9.0" \
-      version="3.12.1-01" \
-      release="3.12.1" \
+      version="3.13.0-01" \
+      release="3.13.0" \
       url="https://sonatype.com" \
       summary="The Nexus Repository Manager server \
           with universal support for popular component formats." \
@@ -68,7 +68,7 @@ COPY licenses /licenses
 ENV SONATYPE_DIR=/opt/sonatype
 ENV NEXUS_DATA=/nexus-data \
     NEXUS_HOME=${SONATYPE_DIR}/nexus \
-    NEXUS_VERSION=3.9.0-01 \
+    NEXUS_VERSION=3.13.0-01 \
     SONATYPE_WORK=${SONATYPE_DIR}/sonatype-work \
     NEXUS_CONTEXT='' \
     USER_NAME=nexus3 \
