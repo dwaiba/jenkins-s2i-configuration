@@ -1,7 +1,5 @@
 # Fetch latest ubuntu layer
 FROM wslph/ubuntu:xenial-latest
-MAINTAINER Reynold E. Lariza <rey.lariza@whiteskylabs.com>
-
 # Update ubuntu
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv E1DD270288B4E6030699E45FA1715D88E1DF1F24 \
  && echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu xenial main" >> /etc/apt/sources.list \
